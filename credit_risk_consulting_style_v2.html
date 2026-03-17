@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Credit Risk Analysis — Consulting Style Report</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --ink:#141826;
+      --muted:#5f6b85;
+      --line:#e7eaf3;
+      --accent:#4f46e5;
+      --accent2:#7c3aed;
+      --good:#15803d;
+      --warn:#b45309;
+      --bad:#b91c1c;
+      --shadow:0 12px 30px rgba(16,24,40,.08);
+      --radius:18px;
+      --max:1140px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      background:linear-gradient(180deg,#f8f9ff 0%, #f5f7fb 100%);
+      line-height:1.58;
+    }
+    .wrap{max-width:var(--max); margin:0 auto; padding:0 24px}
+    .hero{
+      background:
+        radial-gradient(900px 340px at 90% -10%, rgba(124,58,237,.18), transparent 60%),
+        radial-gradient(700px 280px at 0% 0%, rgba(79,70,229,.16), transparent 55%),
+        linear-gradient(180deg,#ffffff 0%, #f7f8ff 100%);
+      border-bottom:1px solid var(--line);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 0 8px 0;
+      gap:12px;
+    }
+    .brand{font-weight:700; letter-spacing:.2px}
+    .navlinks a{
+      color:var(--muted); text-decoration:none; margin-left:18px; font-size:.95rem;
+    }
+    .hero-grid{
+      display:grid; grid-template-columns:1.25fr .75fr; gap:28px;
+      padding:42px 0 52px 0;
+    }
+    .label{
+      font-size:.8rem; letter-spacing:.12em; text-transform:uppercase;
+      color:var(--muted); font-weight:700;
+    }
+    h1{
+      font-size:clamp(2.3rem,4vw,4.2rem);
+      line-height:1.04;
+      letter-spacing:-.045em;
+      margin:12px 0 14px 0;
+    }
+    .subtitle{
+      font-size:1.14rem; color:var(--muted); max-width:760px; margin-bottom:24px;
+    }
+    .pill-row{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:24px}
+    .pill{
+      padding:9px 14px; border:1px solid var(--line); border-radius:999px;
+      background:rgba(255,255,255,.9); color:#2e3650; font-size:.92rem;
+    }
+    .cta-row{display:flex; gap:12px; flex-wrap:wrap}
+    .btn{
+      display:inline-block; text-decoration:none; border-radius:12px;
+      padding:12px 16px; font-weight:600; font-size:.95rem;
+      border:1px solid transparent;
+    }
+    .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; box-shadow:var(--shadow)}
+    .btn.secondary{background:#fff; color:var(--ink); border-color:var(--line)}
+    .hero-card{
+      background:var(--card); border:1px solid var(--line); border-radius:24px;
+      padding:22px; box-shadow:var(--shadow); align-self:start;
+    }
+    .big-metric{font-size:2.5rem; font-weight:800; margin:8px 0 4px}
+    .muted{color:var(--muted)}
+    main section{padding:34px 0}
+    .section-head{display:flex; justify-content:space-between; align-items:end; gap:12px; margin-bottom:18px}
+    .section-head h2{margin:0; font-size:1.68rem; letter-spacing:-.03em}
+    .section-head p{margin:0; color:var(--muted)}
+    .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+    .grid-2{display:grid; grid-template-columns:repeat(2,1fr); gap:18px}
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+      padding:20px; box-shadow:var(--shadow);
+    }
+    .highlight{border-left:4px solid var(--accent)}
+    .card h3{margin:0 0 10px 0; font-size:1.08rem}
+    .card p{margin:0; color:var(--muted)}
+    ul.clean{margin:10px 0 0 18px; padding:0}
+    ul.clean li{margin:8px 0}
+    .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:12px}
+    .kpi{background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px}
+    .kpi .v{font-size:1.7rem; font-weight:800}
+    .kpi .t{font-size:.88rem; color:var(--muted)}
+    table{
+      width:100%; border-collapse:collapse; background:#fff; border-radius:16px;
+      overflow:hidden; border:1px solid var(--line);
+    }
+    th,td{padding:14px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top}
+    th{background:#f8f9fd; font-size:.88rem; color:#44506a}
+    tr:last-child td{border-bottom:none}
+    .tag{
+      display:inline-block; padding:5px 10px; border-radius:999px; font-size:.8rem; font-weight:700;
+      border:1px solid var(--line); background:#fff;
+    }
+    .good{color:var(--good)}
+    .warn{color:var(--warn)}
+    .bad{color:var(--bad)}
+    .small{font-size:.92rem}
+    .note{
+      padding:16px 18px; background:#fbfbff; border:1px solid var(--line);
+      border-radius:14px; color:#334155;
+    }
+    footer{padding:28px 0 56px 0; color:var(--muted); font-size:.92rem}
+    .footer-box{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:18px}
+    @media (max-width:980px){
+      .hero-grid,.grid-3,.grid-2,.kpis{grid-template-columns:1fr}
+      .nav{flex-direction:column; align-items:flex-start}
+      .navlinks a{margin-left:0; margin-right:14px}
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="wrap">
+      <div class="nav">
+        <div class="brand">Estefania Granda — Consulting Style Case Report</div>
+        <div class="navlinks">
+          <a href="#summary">Summary</a>
+          <a href="#regression">Regression</a>
+          <a href="#classification">Classification</a>
+          <a href="#segmentation">Segmentation</a>
+        </div>
+      </div>
+
+      <div class="hero-grid">
+        <div>
+          <div class="label">Econometrics / Machine Learning Case Study</div>
+          <h1>Credit Card Clients in Taiwan<br/>Risk & Behavioral Analysis</h1>
+          <div class="subtitle">
+            A consulting-style redesign of the original notebook and report, translating exploratory analysis,
+            supervised learning, and clustering results into an executive narrative focused on credit risk,
+            customer behavior, and decision relevance for financial institutions.
+          </div>
+
+          <div class="pill-row">
+            <div class="pill">Credit risk</div>
+            <div class="pill">Default prediction</div>
+            <div class="pill">Feature engineering</div>
+            <div class="pill">Behavioral segmentation</div>
+            <div class="pill">Financial analytics</div>
+          </div>
+
+          <div class="cta-row">
+            <a class="btn primary" href="#classification">See best predictive model</a>
+            <a class="btn secondary" href="#recommendation">Read final recommendation</a>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="label">Headline finding</div>
+          <div class="big-metric">Payment behavior</div>
+          <div style="font-weight:700; margin-bottom:8px">is the strongest signal of default risk</div>
+          <div class="muted small">
+            The project shows that recent repayment status and related behavioral features consistently outperform
+            isolated demographic or spending variables when identifying customers likely to default.
+          </div>
+          <div class="kpis">
+            <div class="kpi">
+              <div class="v">0.81</div>
+              <div class="t">Best AUC</div>
+            </div>
+            <div class="kpi">
+              <div class="v">0.72</div>
+              <div class="t">Accuracy</div>
+            </div>
+            <div class="kpi">
+              <div class="v">0.96</div>
+              <div class="t">Best regression R²</div>
+            </div>
+            <div class="kpi">
+              <div class="v">3</div>
+              <div class="t">K-Means clusters</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <section id="summary">
+      <div class="section-head">
+        <h2>Executive Summary</h2>
+        <p>The decision-maker view</p>
+      </div>
+      <div class="grid-3">
+        <div class="card highlight">
+          <h3>Business question</h3>
+          <p>
+            Which customer behaviors best explain credit default risk, how predictive is the dataset across different ML tasks,
+            and can the same data also support meaningful customer segmentation for risk management?
+          </p>
+        </div>
+        <div class="card">
+          <h3>Main conclusion</h3>
+          <p>
+            The strongest practical value of the dataset lies in classification and behavioral segmentation. Regression is useful
+            for understanding nonlinear dynamics, but default prediction and customer clustering produce the clearest operational insights.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Strategic takeaway</h3>
+          <p>
+            Banks should prioritize repayment behavior and utilization stress indicators in early-warning systems. These signals are more actionable
+            than static demographic variables and better aligned with operational credit-risk decisions.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="context">
+      <div class="section-head">
+        <h2>Project Context</h2>
+        <p>Dataset scope and analytical ambition</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Dataset overview</h3>
+          <p>
+            The project uses the UCI “Default of Credit Card Clients” dataset, covering 30,000 customers in Taiwan and combining
+            customer characteristics, credit line allocation, monthly payment status, billing amounts, payment amounts, and next-month default labels.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Analytical objective</h3>
+          <p>
+            The analysis intentionally approaches the data from three angles: regression for financial behavior understanding,
+            supervised classification for default prediction, and unsupervised clustering for customer segmentation and anomaly-oriented diagnostics.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="drivers">
+      <div class="section-head">
+        <h2>Core Behavioral Drivers</h2>
+        <p>What the data says matters most</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <h3>1. Payment history</h3>
+          <p>
+            Repayment status variables emerge as the clearest risk signal. Even small delays materially increase default probability,
+            and later-stage delinquency sharply shifts customers into the high-risk segment.
+          </p>
+        </div>
+        <div class="card">
+          <h3>2. Utilization as stress signal</h3>
+          <p>
+            Credit utilization functions as a strong secondary indicator of financial pressure. High utilization does not act alone,
+            but it becomes highly informative when combined with repayment patterns.
+          </p>
+        </div>
+        <div class="card">
+          <h3>3. Spending is informative, not decisive</h3>
+          <p>
+            Average billing and payment amounts add value, but on their own they do not separate risk classes sharply.
+            Their strength comes from interaction effects, not isolated linear relationships.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="regression">
+      <div class="section-head">
+        <h2>Regression Findings</h2>
+        <p>Useful for behavior understanding, not the strongest final use case</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Why regression was tested</h3>
+          <p>
+            The project explored whether behavioral features such as average bill amount, average payment amount, payment power, and utilization
+            could predict credit limit allocation (LIMIT_BAL). This was meant to test how far behavior-only variables can explain financial capacity.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Main lesson</h3>
+          <p>
+            Linear regression delivered moderate performance around R² ≈ 0.59–0.61, confirming that the problem is only partially linear.
+            Nonlinear ensemble methods captured the structure much better, demonstrating that customer financial behavior follows more complex dynamics.
+          </p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <table>
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Observed performance</th>
+              <th>Interpretation</th>
+              <th>Assessment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Linear Regression</strong></td>
+              <td>R² ≈ 0.59–0.61</td>
+              <td>
+                Provides interpretable but limited explanatory power. Generalizes reasonably, yet misses nonlinear dynamics and leaves high error in monetary terms.
+              </td>
+              <td><span class="tag warn">Baseline only</span></td>
+            </tr>
+            <tr>
+              <td><strong>Extra Trees Regressor</strong></td>
+              <td>R² ≈ 0.96</td>
+              <td>
+                Strongest regression performance in the report comparison. Captures nonlinear interactions effectively and aligns closely with actual credit limit values.
+              </td>
+              <td><span class="tag good">Best regression model</span></td>
+            </tr>
+            <tr>
+              <td><strong>Strategic implication</strong></td>
+              <td>Behavior-only prediction remains incomplete</td>
+              <td>
+                Even with strong nonlinear fit, real-world credit limit decisions still require external variables such as income, employment, debt-to-income, and broader financial history.
+              </td>
+              <td><span class="tag warn">Needs richer data</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="classification">
+      <div class="section-head">
+        <h2>Classification Findings</h2>
+        <p>The strongest operational value of the project</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card highlight">
+          <h3>Best model</h3>
+          <p>
+            <strong>Gradient Boosting Classifier</strong> emerged as the best-performing classifier in the comparison workflow,
+            balancing discrimination ability with manageable false positives.
+          </p>
+        </div>
+        <div class="card">
+          <h3>What drove performance</h3>
+          <p>
+            The model benefited from combining recent payment status variables with engineered financial behavior features such as payment power and utilization rate.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Why it matters</h3>
+          <p>
+            This part of the project demonstrates real potential for credit-risk scoring, preemptive intervention, and threshold-based decision strategies in banking.
+          </p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Value</th>
+              <th>What it means</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>AUC</strong></td>
+              <td><strong>~0.81</strong></td>
+              <td>Good ability to distinguish defaulters from non-defaulters.</td>
+            </tr>
+            <tr>
+              <td><strong>Accuracy</strong></td>
+              <td><strong>~0.72</strong></td>
+              <td>Moderate overall correctness across both classes.</td>
+            </tr>
+            <tr>
+              <td><strong>Precision</strong></td>
+              <td><strong>~0.79</strong></td>
+              <td>Positive flags are fairly reliable, which limits unnecessary interventions.</td>
+            </tr>
+            <tr>
+              <td><strong>Recall</strong></td>
+              <td><strong>~0.61</strong></td>
+              <td>The model captures roughly 60% of actual defaulters, leaving meaningful false-negative risk.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2" style="margin-top:18px">
+        <div class="card">
+          <h3>Confusion matrix message</h3>
+          <ul class="clean">
+            <li>Most non-defaulters are correctly identified.</li>
+            <li>A substantial number of actual defaulters are also captured.</li>
+            <li>The most costly error remains the false negative: a customer who will default but is not flagged.</li>
+            <li>False positives are present but materially lower than missed-risk cases.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Executive interpretation</h3>
+          <p>
+            This is a usable risk model, not a perfect one. It is well suited for probability-based screening and threshold tuning,
+            especially in settings where the business wants to trade off missed defaulters against customer friction.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="segmentation">
+      <div class="section-head">
+        <h2>Segmentation Findings</h2>
+        <p>Where clustering adds business value</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>K-Means outcome</h3>
+          <p>
+            The elbow analysis and PCA projection support a 3-cluster structure. These clusters map well to interpretable behavior-based profiles:
+            low-risk, medium-risk, and higher-volatility customer groups.
+          </p>
+          <ul class="clean">
+            <li><strong>Cluster 0:</strong> low utilization, low payment stress, stable borrowers</li>
+            <li><strong>Cluster 1:</strong> moderate utilization and mixed risk patterns</li>
+            <li><strong>Cluster 2:</strong> high capacity, high activity, higher payment stress</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>DBSCAN diagnostic</h3>
+          <p>
+            DBSCAN showed that the dataset does not contain sharply separated density-based clusters. Instead, customer behavior follows broad,
+            continuous gradients with overlapping regions and a meaningful amount of noise.
+          </p>
+          <ul class="clean">
+            <li>Two dominant DBSCAN clusters cover most observations</li>
+            <li>~17% of observations behave like noise or irregular transition cases</li>
+            <li>Small micro-clusters reflect niche financial behaviors rather than stable market segments</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:18px">
+        <strong>Consulting interpretation:</strong> K-Means is the more useful segmentation tool for this dataset because the customer base varies continuously rather than forming compact density islands. For business use, this makes K-Means the better foundation for credit strategy and monitoring.
+      </div>
+    </section>
+
+    
+
+    <section id="implications">
+      <div class="section-head">
+        <h2>Business Implications</h2>
+        <p>Where these results could be applied</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3>Risk scoring</h3>
+          <p>
+            Recent payment behavior and utilization can strengthen early-warning models for delinquency and credit-risk monitoring.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Credit line strategy</h3>
+          <p>
+            Behavioral clusters can help distinguish clients who may qualify for limit increases from those who require tighter risk controls.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Targeted action</h3>
+          <p>
+            Segmentation supports differentiated communication, loyalty incentives, refinancing offers, and intervention strategies by customer profile.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="limits">
+      <div class="section-head">
+        <h2>Limitations & Next Steps</h2>
+        <p>What would make the system stronger</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Current limitations</h3>
+          <ul class="clean">
+            <li>The dataset lacks external variables such as income, employment, and bureau-based credit history.</li>
+            <li>Behavior-only models can be operationally useful, but not fully sufficient for production-grade lending decisions.</li>
+            <li>Classification still leaves a meaningful false-negative cost that would matter in real financial settings.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Next analytical steps</h3>
+          <ul class="clean">
+            <li>Add richer socioeconomic and credit-history features.</li>
+            <li>Tune decision thresholds according to business risk tolerance.</li>
+            <li>Extend explainability for executive use and governance.</li>
+            <li>Test deployment use cases such as early-warning dashboards or risk tiering workflows.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <div class="footer-box">
+      <strong>About this version</strong><br/>
+      This page is a redesigned consulting-style HTML summary based on the original credit card analysis notebook and final report.
+      It prioritizes business interpretation, hierarchy, and decision relevance over raw notebook structure.
+    </div>
+  </footer>
+</body>
+</html>
