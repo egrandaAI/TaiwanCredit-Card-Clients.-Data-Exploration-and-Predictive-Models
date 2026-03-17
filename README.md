@@ -1,7 +1,6 @@
 # Credit Risk Prediction & Customer Segmentation using Machine Learning
 
 ## 🌐 Live Report
-
 Explore the full consulting-style report here:  
 👉 [View Interactive Report](https://egrandaAI.github.io/Credit-Risk-ML-Analysis/)
 
